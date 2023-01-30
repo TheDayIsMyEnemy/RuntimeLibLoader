@@ -1,7 +1,8 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System.Reflection;
+﻿using System.Reflection;
 using System;
 using System.Linq;
+using System.IO;
+using System.Runtime.Loader;
 
 namespace ConsoleAppWithPlugins
 {
@@ -9,32 +10,27 @@ namespace ConsoleAppWithPlugins
     {
         private static void Main(string[] args)
         {
-            var projectDir = string.Join(
+            var baseDir = string.Join(
                 '/',
-                AppDomain.CurrentDomain.BaseDirectory.Split(new char[] { '/' }).SkipLast(4)
+                AppDomain.CurrentDomain.BaseDirectory.Split(new char[] { '/' }).SkipLast(5)
             );
 
-            var plugin = PluginLoader.LoadPlugin(
-                projectDir,
-                "dlls",
-                "BeautifulConsoleLib",
-                "BeautifulConsolePlugin.dll"
-            );
+            var fileName = "BeautifulConsolePlugin.dll";
 
-            if (plugin == null){
-                return;
-            }
+            var plugin = PluginLoader.LoadPlugin(baseDir, fileName);
 
-            var cmd = PluginLoader
-                .CreatePluginCommands(plugin)
-                .FirstOrDefault();
+            plugin
+            .LoadAssembly(
+                AssemblyName.GetAssemblyName(
+                    Path.GetFileNameWithoutExtension(fileName)));
+
+            var cmd = PluginLoader.CreateCommand(plugin.Assembly);
 
             if (cmd == null){
                 return;
             }
 
             cmd.Execute("Hello world!", "How you doing?", "Plugin component test");
-
         }
     }
 }

@@ -2,22 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-  <PreserveCompilationContext>true</PreserveCompilationContext>
-   <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-    <CopyDebugSymbolFilesFromPackages>false</CopyDebugSymbolFilesFromPackages>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Spectre.Console" Version="0.46.0" />
+    <ProjectReference Include="..\PluginBaseLib\PluginBaseLib.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PluginBaseLib\PluginBaseLib.csproj" />
-    <!-- <Private>false</Private> -->
-    <!-- <ExcludeAssets>runtime</ExcludeAssets> -->
+    <PackageReference Include="Spectre.Console" Version="0.46.0" />
   </ItemGroup>
 
 </Project>
