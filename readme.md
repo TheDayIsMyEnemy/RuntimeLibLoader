@@ -21,18 +21,22 @@
     ` <ExcludeAssets>runtime</ExcludeAssets> `
 
 
+### Assembly resolving func needs to be implemented in order to load the main assembly dependencies
 
-### Assembly resolving func needs to be implemented
-     in order to load the main assembly dependencies
+- It happens when an assembly fails to load into the load context.
+- Assembly resolving method signature:
 
-    - It happens when an assembly fails to load into the load context.
-    - Assembly resolving method signature:
+    `Func<AssemblyLoadContext, AssemblyName, Assembly?>? AssemblyLoadContext.Resolving`
+
 
 
 ### Build and run
 
-    - Building the plugin projects first
-    - Running the console app
+- Building the plugin projects first, and considering you are in the folder with the sln file
+   
+    ` dotnet build `
+   
+- Running the console app
 
     ` dotnet run `
 
