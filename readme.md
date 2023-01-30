@@ -21,9 +21,9 @@
     ` <ExcludeAssets>runtime</ExcludeAssets> `
 
 
-### Passing the relative path to the plugin
+### Passing the plugin filename
 
-    ` dotnet run "BeautifulConsolePlugin.dll" `
+     dotnet run BeautifulConsolePlugin.dll 
 
 ### Reference
 
