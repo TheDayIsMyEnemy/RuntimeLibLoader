@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
-using System.Threading.Tasks;
 
 namespace ConsoleAppWithPlugins
 {
@@ -12,13 +9,26 @@ namespace ConsoleAppWithPlugins
     {
         private readonly AssemblyDependencyResolver resolver;
 
-        public Plugin(string path)
+        public Plugin(string baseDir, string fileName)
             : base(true)
         {
-            resolver = new AssemblyDependencyResolver(path);
+            BaseDir = baseDir;
+            FileName = fileName;
+            PluginPath = Path.Combine(BaseDir, FileName);
+
+            resolver = new AssemblyDependencyResolver(PluginPath);
         }
 
+        public string FileName { get; private set; }
+
+        public string PluginPath { get; private set; }
+
+        public string BaseDir { get; private set; }
+
         public Assembly Assembly { get; private set; }
+
+        public Assembly LoadMainAssembly() =>
+            LoadAssembly(AssemblyName.GetAssemblyName(PluginPath));
 
         public Assembly LoadAssembly(AssemblyName name)
         {
@@ -32,15 +42,22 @@ namespace ConsoleAppWithPlugins
             return null;
         }
 
-        // protected override nint LoadUnmanagedDll(string unmanagedDllName)
-        // {
-        //     var libPath = resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
-        //     if (libPath == null)
-        //     {
-        //         return IntPtr.Zero;
-        //     }
+        protected override nint LoadUnmanagedDll(string unmanagedDllName)
+        {
+            var libPath = resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+            if (libPath == null)
+            {
+                return IntPtr.Zero;
+            }
 
-        //     return LoadUnmanagedDllFromPath(libPath);
-        // }
+            return LoadUnmanagedDllFromPath(libPath);
+        }
+
+        public Assembly ResolveDependencies(AssemblyLoadContext ctx, AssemblyName ass)
+        {
+            return AssemblyLoadContext.Default.LoadFromAssemblyPath(
+                Path.Combine(BaseDir, $"{ass.Name}.dll")
+            );
+        }
     }
 }

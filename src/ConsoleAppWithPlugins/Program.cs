@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.IO;
 using System.Runtime.Loader;
+using System.Collections.Generic;
 
 namespace ConsoleAppWithPlugins
 {
@@ -15,22 +16,37 @@ namespace ConsoleAppWithPlugins
                 AppDomain.CurrentDomain.BaseDirectory.Split(new char[] { '/' }).SkipLast(5)
             );
 
-            var fileName = "BeautifulConsolePlugin.dll";
+            var fileNames = new string[] { "BeautifulConsolePlugin.dll", "EmojiSpammerPlugin.dll" };
 
-            var plugin = PluginLoader.LoadPlugin(baseDir, fileName);
+            var plugins = new List<Plugin>();
 
-            plugin
-            .LoadAssembly(
-                AssemblyName.GetAssemblyName(
-                    Path.GetFileNameWithoutExtension(fileName)));
+            foreach (var fileName in fileNames)
+            {
+                var plugin = PluginLoader.LoadPlugin(baseDir, fileName);
+                plugins.Add(plugin);
 
-            var cmd = PluginLoader.CreateCommand(plugin.Assembly);
+                plugin.LoadMainAssembly();
+                Console.WriteLine(
+                    $"\n{plugin.Assembly} loaded at {DateTime.Now.ToShortTimeString()}\n"
+                );
 
-            if (cmd == null){
-                return;
+                plugin.Resolving += plugin.ResolveDependencies;
+
+                var cmd = PluginLoader.CreateCommand(plugin.Assembly);
+                if (cmd != null)
+                {
+                    cmd.Execute();
+                }
+
+                plugin.Unload();
+
+                Console.WriteLine("\n\n");
+
+                plugin.Unloading += (ctx) =>
+                {
+                    Console.WriteLine($"\n{ctx} unloaded at {DateTime.Now.ToShortTimeString()}\n");
+                };
             }
-
-            cmd.Execute("Hello world!", "How you doing?", "Plugin component test");
         }
     }
 }

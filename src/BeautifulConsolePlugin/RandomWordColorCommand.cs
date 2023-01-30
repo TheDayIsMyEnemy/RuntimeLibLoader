@@ -13,13 +13,14 @@ namespace RandomWordColorPrinter
 
         public CommandResult Execute(params string[] args)
         {
-            var coloredSentences = new List<string>();
+            var rndIndex = rnd.Next(0, Quotes.SmallGods.Length);
+            var quote = Quotes.SmallGods[rndIndex];
 
-            foreach (var sentence in args)
+            var coloredSentence = new List<string>();
+
+            try
             {
-                var coloredSentence = new List<string>();
-
-                foreach (var word in sentence.Split(" "))
+                foreach (var word in quote.Split(" "))
                 {
                     var color = (ConsoleColor)rnd.Next(256);
 
@@ -28,12 +29,13 @@ namespace RandomWordColorPrinter
                     coloredSentence.Add(coloredWord);
                 }
 
-                coloredSentences.Add(string.Join(" ", coloredSentence));
+                AnsiConsole.Markup($":books: {string.Join(" ", coloredSentence)}");
             }
-
-            foreach (var coloredSentence in coloredSentences)
+            catch
             {
-                AnsiConsole.Markup($":alien_monster: {coloredSentence} :alien_monster:");
+                AnsiConsole.Markup($":books: {quote}");
+
+                return CommandResult.Error;
             }
 
             return CommandResult.Success;

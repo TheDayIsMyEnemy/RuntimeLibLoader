@@ -21,10 +21,26 @@
     ` <ExcludeAssets>runtime</ExcludeAssets> `
 
 
-### Passing the relative path to the plugin
+### Assembly resolving func needs to be implemented
+     in order to load the main assembly dependencies
 
-    ` dotnet run "BeautifulConsolePlugin.dll" `
+    - It happens when an assembly fails to load into the load context.
+    - Assembly resolving method signature:
 
-### Reference
+    `Func<AssemblyLoadContext, AssemblyName, Assembly?>? AssemblyLoadContext.Resolving`
 
+
+
+### Build and run
+
+    - Building the plugin projects first
+    - Running the console app
+
+    ` dotnet run `
+
+
+
+### References
+
+- https://learn.microsoft.com/en-us/dotnet/core/dependency-loading/understanding-assemblyloadcontext
 - https://learn.microsoft.com/en-us/dotnet/standard/assembly/unloadability
